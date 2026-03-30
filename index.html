@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>無限ドリル</title>
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <h1 class="brand-title">無限ドリル</h1>
+        <p class="brand-sub">必要なところだけ、必要なだけ練習できるドリル</p>
+      </div>
+
+      <div class="menu-title">目次</div>
+      <div class="menu-list">
+        <button class="menu-button active" data-mode="plusminus">正負の数（加減）</button>
+        <button class="menu-button" data-mode="multiply">かけ算（準備中）</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section class="panel settings-panel">
+        <h2 class="panel-title">設定</h2>
+        <p class="panel-subtitle">
+          問題の数や、項数、累乗を使うかどうかをここで決めます。
+        </p>
+
+        <div class="settings-grid">
+
+          <div class="field">
+
+            <label>桁数</label>
+
+            <div class="inline-checkbox-group">
+              <label>
+                <input type="checkbox" name="digit" value="1" checked />
+                1桁
+              </label>
+
+              <label>
+                <input type="checkbox" name="digit" value="2" />
+                2桁
+              </label>
+
+              <label>
+                <input type="checkbox" name="digit" value="3" />
+                3桁
+              </label>
+            </div>
+          </div>
+          <div class="field">
+            <label for="problemCount">問題数</label>
+            <input id="problemCount" type="number" min="1" max="60" value="20" />
+          </div>
+
+          <div class="field">
+            <label for="termCount">項数</label>
+            <input id="termCount" type="number" min="2" max="6" value="2" />
+          </div>
+
+          <div class="field checkbox-group">
+            <label class="checkbox-label">
+              <input id="useMultiply" type="checkbox" />
+              乗算（×）を含める
+            </label>
+
+            <label class="checkbox-label">
+              <input id="usePower" type="checkbox" />
+              累乗を使う
+            </label>
+
+            <div id="powerOptions" class="power-options">
+              <label class="power-label">
+                <input type="checkbox" name="power" value="2" checked />
+                2乗
+              </label>
+              <label class="power-label">
+                <input type="checkbox" name="power" value="3" />
+                3乗
+              </label>
+              <label class="power-label">
+                <input type="checkbox" name="power" value="4" />
+                4乗
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="action-button" id="generateButton">問題を作る</button>
+          <button class="action-button secondary" id="printQuestionButton">問題を印刷</button>
+          <button class="action-button secondary" id="printAnswerButton">答えを印刷</button>
+        </div>
+      </section>
+
+      <section class="panel problems-panel">
+        <div class="problem-header">
+          <div class="problem-title-wrap">
+            <h2 class="problem-title" id="sheetTitle">正負の数（加減）</h2>
+            <div class="problem-note" id="sheetNote">設定して「問題を作る」を押すとここに表示されます。</div>
+          </div>
+        </div>
+
+        <div id="sheet" class="sheet"></div>
+        <div id="emptyState" class="empty-state">
+          まだ問題が作られていません。<br />
+          右上の設定を選んで「問題を作る」を押してください。
+        </div>
+
+        <div class="footer-credit">運営：<a href="https://konohana-fusion.jp/" target="_blank">コノハナ・フュージョン合同会社</a></div>
+      </section>
+    </main>
+  </div>
+<script src="js/utils.js"></script>
+<script src="js/generator.js"></script>
+<script src="js/printer.js"></script> <!-- ★追加 -->
+<script src="js/app.js"></script>
+</body>
+</html>
