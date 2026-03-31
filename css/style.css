@@ -1,3 +1,4 @@
+/* css\style.css */
 :root {
   --bg: #f7faff;
   --panel: #ffffff;
@@ -32,6 +33,10 @@ body {
 
 body {
   min-height: 100vh;
+}
+
+.single-page .app {
+  display: block;
 }
 
 .app {
@@ -333,7 +338,10 @@ body {
 }
 
 .footer-inner {
-  max-width: 800px;
+  max-width: none;
+  width: 100%;
+  padding: 0 20px;
+  max-width: 1200px;
   margin: 0 auto;
   text-align: center;
   font-size: 13px;
@@ -471,5 +479,18 @@ body {
     border-radius: 0;
     box-shadow: none;
     font-size: 18px;
+  }
+
+  .footer {
+    display: none;
+  }
+
+  body::after {
+    content: "©無限アプリ - コノハナ・フュージョン合同会社 https://mugendrill.com/";
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 10px;
+    color: #555;
   }
 }
