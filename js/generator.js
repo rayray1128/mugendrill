@@ -1,3 +1,4 @@
+//js\generator.js
 function formatNumber(num) {
   return num >= 0 ? `+${num}` : `${num}`;
 }
@@ -34,9 +35,25 @@ function createSingleNumber(settings) {
   return { display: formatted, value: base };
 }
 
+// =============================
+// 混合数生成（ここ追加）
+// =============================
+function createMixedNumber(settings) {
+  const types = settings.numberTypes?.length
+    ? settings.numberTypes
+    : ["int"];
+
+  const type = pickRandom(types);
+
+  if (type === "fraction") return createFraction();
+  if (type === "decimal") return createDecimal();
+
+  return createSingleNumber(settings); // 整数
+}
+
 function createProblem(settings) {
   const numbers = Array.from({ length: settings.termCount }, () =>
-    createSingleNumber(settings)
+    createMixedNumber(settings)
   );
 
   const ops = Array.from(

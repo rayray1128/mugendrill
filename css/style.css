@@ -41,7 +41,7 @@ body {
 
 .app {
   display: grid;
-  grid-template-columns: 240px 1fr;
+  grid-template-columns: 320px 1fr;
   min-height: 100vh;
 }
 
@@ -96,17 +96,6 @@ body {
   cursor: pointer;
   box-shadow: var(--shadow);
   transition: 0.2s ease;
-}
-
-.menu-button:hover {
-  background: #fdfefe;
-  transform: translateY(-1px);
-}
-
-.menu-button.active {
-  border-color: #b9cdfb;
-  background: #f8fbff;
-  font-weight: 700;
 }
 
 .content {
@@ -429,10 +418,6 @@ body {
   background: #eef4ff;
   border-color: #a9c4ff;
   transform: translateY(-1px);
-}
-
-.menu-button:hover {
-  background: #e0e6f0;
 }
 
 .menu-button.active {
