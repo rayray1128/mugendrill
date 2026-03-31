@@ -8,23 +8,9 @@
   </head>
   <body>
     <div class="app">
-      <aside class="sidebar">
-        <div class="brand">
-          <h1 class="brand-title">無限ドリル</h1>
-          <p class="brand-sub">必要なところだけ、必要なだけ練習できるドリル</p>
-        </div>
-
-        <div class="menu-title">目次</div>
-        <div class="menu-list">
-          <button class="menu-button active" data-mode="plusminus">
-            正負の数（加減）
-          </button>
-          <button class="menu-button" data-mode="multiply">
-            かけ算（準備中）
-          </button>
-        </div>
-      </aside>
-
+      <!-- サイドバー -->
+      <div id="sidebar"></div>
+      <!-- メイン -->
       <main class="content">
         <section class="panel settings-panel">
           <h2 class="panel-title">設定</h2>
@@ -124,12 +110,6 @@
           <div id="emptyState" class="empty-state">
             まだ問題が作られていません。<br />
             右上の設定を選んで「問題を作る」を押してください。
-          </div>
-
-          <div class="footer-credit">
-            運営：<a href="https://konohana-fusion.jp/" target="_blank"
-              >コノハナ・フュージョン合同会社</a
-            >
           </div>
         </section>
       </main>

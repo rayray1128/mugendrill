@@ -1,4 +1,3 @@
-// js/layout/sidebar.js
 document.addEventListener("DOMContentLoaded", () => {
   const html = `
     <aside class="sidebar">
@@ -9,18 +8,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       <div class="menu-title">目次</div>
       <div class="menu-list">
-        <button class="menu-button active" data-mode="plusminus">
-          正負の数（加減）-整数のみ
-        </button>
-        <button class="menu-button" data-mode="multiply">
-          かけ算（準備中）
-        </button>
+        <a href="/" class="menu-button">正負の数（整数）</a>
+        <a href="/fraction.html" class="menu-button">正負の数（整数・分数・小数）</a>
+        <a href="/decimal.html" class="menu-button">小数</a>
       </div>
     </aside>
   `;
 
-  const target = document.getElementById("sidebar");
-  if (!target) return;
-
-  target.innerHTML = html;
+  document.getElementById("sidebar").innerHTML = html;
 });
