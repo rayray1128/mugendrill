@@ -287,6 +287,9 @@ body {
   font-size: 22px;
   line-height: 2;
   word-break: break-word;
+  display: flex;
+  align-items: center; /* ← これが本体 */
+  gap: 8px;
 }
 
 .question-number {
@@ -297,9 +300,9 @@ body {
 
 .blank {
   display: inline-block;
-  min-width: 88px;
+  min-width: 80px;
   border-bottom: 2px solid #b6c7e8;
-  transform: translateY(-2px);
+  transform: translateY(15px);
 }
 
 .empty-state {
@@ -432,6 +435,24 @@ body {
   margin-bottom: 10px;
 }
 
+.blank {
+  display: inline-block;
+  width: 100px;
+  height: 1.2em; /* ←高さを持たせる */
+  border-bottom: 2px solid #b6c7e8;
+  vertical-align: bottom; /* ←これ重要 */
+}
+
+.fraction-wrap {
+  display: inline-block;
+  align-items: center;
+  gap: 2px;
+}
+
+.minus {
+  font-weight: bold;
+}
+
 @media (max-width: 980px) {
   .app {
     grid-template-columns: 1fr;
@@ -501,6 +522,15 @@ body {
     border-radius: 0;
     box-shadow: none;
     font-size: 18px;
+  }
+
+  .question-line {
+    display: flex;
+    align-items: center; /* ← ここだけ中央揃え */
+  }
+
+  .answer-line {
+    /* 何もしない（下に自然に落ちる） */
   }
 
   .footer {

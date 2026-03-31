@@ -1,3 +1,5 @@
+//js\generatorFraction.js
+
 // =============================
 // 整数
 // =============================
@@ -150,7 +152,7 @@ function createNumbers(settings) {
 // =============================
 // 問題生成
 // =============================
-function createProblem(settings) {
+function createProblems(settings) {
   const numbers = createNumbers(settings);
 
   const ops = Array.from(
@@ -176,4 +178,76 @@ function calc(a, b, op) {
   if (op === "+") return a + b;
   if (op === "-") return a - b;
   if (op === "×") return a * b;
+}
+
+const BASE_PRIMES = [2, 3, 5, 7];
+
+function gcd(a, b) {
+  return b === 0 ? a : gcd(b, a % b);
+}
+
+function lcm(a, b) {
+  return (a * b) / gcd(a, b);
+}
+
+function lcmArray(arr) {
+  return arr.reduce((acc, val) => lcm(acc, val));
+}
+
+function factorize(n) {
+  const result = [];
+  BASE_PRIMES.forEach(p => {
+    while (n % p === 0) {
+      result.push(p);
+      n /= p;
+    }
+  });
+  return result;
+}
+
+function generateDenominator() {
+  const p1 = BASE_PRIMES[Math.floor(Math.random() * BASE_PRIMES.length)];
+
+  if (Math.random() < 0.3) {
+    const p2 = BASE_PRIMES[Math.floor(Math.random() * BASE_PRIMES.length)];
+    return p1 * p2;
+  }
+
+  if (Math.random() < 0.3) {
+    return p1 * p1;
+  }
+
+  return p1;
+}
+
+function isValidCombination(denoms) {
+  const primesUsed = new Set();
+
+  denoms.forEach(d => {
+    factorize(d).forEach(p => primesUsed.add(p));
+  });
+
+  // 2,3,5,7全部使ったらアウト
+  if (primesUsed.size >= 4) return false;
+
+  return true;
+}
+
+function getLcmLimit(count) {
+  if (count <= 2) return 100;
+  if (count === 3) return 60;
+  return 50;
+}
+
+function generateDenominators(count) {
+  while (true) {
+    const denoms = Array.from({ length: count }, generateDenominator);
+
+    const lcmValue = lcmArray(denoms);
+    const limit = getLcmLimit(count);
+
+    if (lcmValue <= limit && isValidCombination(denoms)) {
+      return denoms;
+    }
+  }
 }

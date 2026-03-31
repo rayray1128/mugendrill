@@ -50,15 +50,79 @@ function createMixedNumber(settings) {
 
   return createSingleNumber(settings); // 整数
 }
-
 function createProblem(settings) {
-  const numbers = Array.from({ length: settings.termCount }, () =>
-    createMixedNumber(settings)
-  );
+  let numbers;
+  const mode = settings.numberMode;
 
+  // =============================
+  // 分数系（LCM制御あり）
+  // =============================
+  if (mode === "fraction" || mode === "int_fraction") {
+    const denoms = generateDenominators(settings.termCount);
+
+    numbers = denoms.map(d => {
+      const type = mode === "fraction"
+        ? "fraction"
+        : pickRandom(["fraction", "int"]);
+
+      if (type === "fraction") {
+        const numerator = rand(1, d - 1);
+        const sign = Math.random() > 0.5 ? -1 : 1;
+
+        return {
+          display: `
+            <span class="fraction-wrap">
+              ${sign === -1 ? '<span class="minus">−</span>' : ''}
+              <span class="fraction">
+                <span class="num">${numerator}</span>
+                <span class="den">${d}</span>
+              </span>
+            </span>
+          `,
+          value: sign * (numerator / d),
+        };
+      }
+
+      const value = createNumberByDigit(settings.selectedDigits);
+      return {
+        display: formatNumber(value),
+        value: value,
+      };
+    });
+
+  // =============================
+  // 小数系
+  // =============================
+  } else if (mode === "decimal" || mode === "int_decimal") {
+    numbers = Array.from({ length: settings.termCount }, () => {
+      const type = mode === "decimal"
+        ? "decimal"
+        : pickRandom(["decimal", "int"]);
+
+      if (type === "decimal") return createDecimal();
+
+      const value = createNumberByDigit(settings.selectedDigits);
+      return {
+        display: formatNumber(value),
+        value: value,
+      };
+    });
+
+  // =============================
+  // 整数のみ
+  // =============================
+  } else {
+    numbers = Array.from({ length: settings.termCount }, () =>
+      createSingleNumber(settings)
+    );
+  }
+
+  // =============================
+  // 演算子
+  // =============================
   const ops = Array.from(
     { length: settings.termCount - 1 },
-    () => pickRandom(settings.useMultiply ? ["+","-","×"] : ["+","-"])
+    () => pickRandom(settings.useMultiply ? ["+","−","×"] : ["+","−"])
   );
 
   let q = numbers[0].display;
@@ -74,7 +138,7 @@ function createProblem(settings) {
 
 function calc(a,b,op){
   if(op === "+") return a+b;
-  if(op === "-") return a-b;
+  if(op === "−") return a-b;
   if(op === "×") return a*b;
 }
 

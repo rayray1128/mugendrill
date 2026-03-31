@@ -6,6 +6,7 @@ const APP_STATE = {
 const DOM = {
   problemCount: document.getElementById("problemCount"),
   termCount: document.getElementById("termCount"),
+  numberMode: document.getElementById("numberMode"),
   useMultiply: document.getElementById("useMultiply"),
   usePower: document.getElementById("usePower"),
   generateButton: document.getElementById("generateButton"),
@@ -45,19 +46,12 @@ function getSettings() {
   return {
     problemCount: clampNumber(toNumber(DOM.problemCount.value),1,60,12),
     termCount: clampNumber(toNumber(DOM.termCount.value),2,6,3),
-    numberTypes: getSelectedNumberTypes(),
+    numberMode: DOM.numberMode.value,
     useMultiply: DOM.useMultiply.checked,
     usePower: DOM.usePower.checked,
     selectedPowers: getSelectedPowers(),
     selectedDigits: getSelectedDigits(),
   };
-}
-
-function getSelectedNumberTypes() {
-  const list = Array.from(document.querySelectorAll('input[name="numberType"]:checked'))
-    .map(n => n.value);
-
-  return list.length ? list : ["int"];
 }
 
 function getSelectedPowers(){
@@ -88,11 +82,11 @@ function render() {
 
   DOM.sheet.innerHTML = APP_STATE.problems
     .map((p, i) => `
-      <div class="question-item">
-        Q${i + 1}. ${p.question} = ${
-          APP_STATE.isAnswerView ? p.answer : '<span class="blank"></span>'
-        }
-      </div>
+    <div class="question-item">
+      Q${i + 1}. ${p.question} = ${
+        APP_STATE.isAnswerView ? formatAnswer(p.answer) : '<span class="blank"></span>'
+      }
+    </div>
     `)
     .join("");
 }

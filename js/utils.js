@@ -1,3 +1,4 @@
+// js/utils.js
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -22,4 +23,16 @@ function escapeHtml(text) {
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;");
+}
+
+function rand(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// =============================
+// 表示用フォーマット
+// =============================
+function formatAnswer(num) {
+  if (Number.isInteger(num)) return num;
+  return Number(num.toFixed(2));
 }
