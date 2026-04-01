@@ -1,4 +1,3 @@
-//js\generator.js
 function formatNumber(num) {
   return num >= 0 ? `+${num}` : `${num}`;
 }
@@ -20,12 +19,25 @@ function createNumberByDigit(selectedDigits) {
   return Math.random() > 0.5 ? value : -value;
 }
 
+// =============================
+// 整数（累乗対応）
+// =============================
 function createSingleNumber(settings) {
-  const base = createNumberByDigit(settings.selectedDigits);
+  const usePowerNow = settings.usePower && Math.random() < 0.7;
+
+  const base = usePowerNow
+    ? createNumberByDigit([1]) // 累乗時は1桁
+    : createNumberByDigit(settings.selectedDigits);
+
   const formatted = formatNumber(base);
 
-  if (settings.usePower && settings.selectedPowers.length && Math.random() > 0.5) {
-    const exponent = pickRandom(settings.selectedPowers);
+  if (usePowerNow) {
+    const powers = settings.selectedPowers.length
+      ? settings.selectedPowers
+      : [2];
+
+    const exponent = pickRandom(powers);
+
     return {
       display: `(${formatted})${toSuperscript(exponent)}`,
       value: Math.pow(base, exponent),
@@ -36,26 +48,38 @@ function createSingleNumber(settings) {
 }
 
 // =============================
-// 混合数生成（ここ追加）
+// 混合数生成
 // =============================
 function createMixedNumber(settings) {
-  const types = settings.numberTypes?.length
-    ? settings.numberTypes
-    : ["int"];
+  const mode = settings.numberMode;
 
-  const type = pickRandom(types);
+  if (mode === "fraction") return createFraction();
+  if (mode === "decimal") return createDecimal();
 
-  if (type === "fraction") return createFraction();
-  if (type === "decimal") return createDecimal();
+  if (mode === "int_fraction") {
+    return Math.random() < 0.5
+      ? createFraction()
+      : createSingleNumber(settings);
+  }
 
-  return createSingleNumber(settings); // 整数
+  if (mode === "int_decimal") {
+    return Math.random() < 0.5
+      ? createDecimal()
+      : createSingleNumber(settings);
+  }
+
+  return createSingleNumber(settings);
 }
+
+// =============================
+// 問題生成
+// =============================
 function createProblem(settings) {
   let numbers;
   const mode = settings.numberMode;
 
   // =============================
-  // 分数系（LCM制御あり）
+  // 分数系（LCM制御）
   // =============================
   if (mode === "fraction" || mode === "int_fraction") {
     const denoms = generateDenominators(settings.termCount);
@@ -83,11 +107,7 @@ function createProblem(settings) {
         };
       }
 
-      const value = createNumberByDigit(settings.selectedDigits);
-      return {
-        display: formatNumber(value),
-        value: value,
-      };
+      return createSingleNumber(settings);
     });
 
   // =============================
@@ -101,11 +121,7 @@ function createProblem(settings) {
 
       if (type === "decimal") return createDecimal();
 
-      const value = createNumberByDigit(settings.selectedDigits);
-      return {
-        display: formatNumber(value),
-        value: value,
-      };
+      return createSingleNumber(settings);
     });
 
   // =============================
@@ -120,33 +136,84 @@ function createProblem(settings) {
   // =============================
   // 演算子
   // =============================
+  const operatorSet = settings.calcType === "muldiv"
+    ? ["×","÷"]
+    : ["+","−"];
+
   const ops = Array.from(
     { length: settings.termCount - 1 },
-    () => pickRandom(settings.useMultiply ? ["+","−","×"] : ["+","−"])
+    () => pickRandom(operatorSet)
   );
 
   let q = numbers[0].display;
   let ans = numbers[0].value;
 
-  for (let i = 1; i < numbers.length; i++) {
-    q += ` ${ops[i - 1]} (${numbers[i].display})`;
-    ans = calc(ans, numbers[i].value, ops[i - 1]);
+  // =============================
+  // 計算（除算だけ制御）
+  // =============================
+ for (let i = 1; i < numbers.length; i++) {
+  const op = ops[i - 1];
+  let next = numbers[i];
+
+  // =============================
+  // 除算の安全処理（ここ重要）
+  // =============================
+  if (op === "÷") {
+    const abs = Math.abs(ans);
+
+    if (abs !== 0) {
+      const divisors = [];
+
+      for (let d = 1; d <= abs; d++) {
+        if (abs % d === 0) divisors.push(d);
+      }
+
+      // ★ここ追加（NaN防止）
+if (divisors.length === 0) {
+  if (settings.numberMode === "fraction") {
+    next = createFraction();
+  } else if (settings.numberMode === "decimal") {
+    next = createDecimal();
+  } else {
+    next = {
+      display: formatNumber(1),
+      value: 1,
+    };
   }
+}
+    } else {
+      // 0のときも保険
+      next = {
+        display: formatNumber(1),
+        value: 1,
+      };
+    }
+  }
+
+  // =============================
+  // 通常処理
+  // =============================
+  q += ` ${op} (${next.display})`;
+  ans = calc(ans, next.value, op);
+}
 
   return { question: q, answer: ans };
 }
 
-function calc(a,b,op){
-  if(op === "+") return a+b;
-  if(op === "−") return a-b;
-  if(op === "×") return a*b;
+// =============================
+// 計算
+// =============================
+function calc(a, b, op) {
+  if (b === undefined || isNaN(b)) return a;
+
+  if (op === "+") return a + b;
+  if (op === "−") return a - b;
+  if (op === "×") return a * b;
+  if (op === "÷") return a / b;
 }
-
-
 // =============================
-// 数学ユーティリティ（LCM系）
+// 数学ユーティリティ
 // =============================
-
 function gcd(a, b) {
   return b === 0 ? a : gcd(b, a % b);
 }
@@ -165,4 +232,3 @@ function isValidDenominators(list, maxLCM = 20) {
 
   return true;
 }
-

@@ -1,8 +1,8 @@
 // printer.js
 
 function printQuestions(APP_STATE, render) {
-  if (!APP_STATE.problems.length) {
-    alert("先に問題を作ってください。");
+  if (APP_STATE.problems.length === 0) {
+    document.getElementById("alertModal").classList.add("show");
     return;
   }
 
@@ -12,8 +12,8 @@ function printQuestions(APP_STATE, render) {
 }
 
 function printAnswers(APP_STATE, render) {
-  if (!APP_STATE.problems.length) {
-    alert("先に問題を作ってください。");
+  if (APP_STATE.problems.length === 0) {
+    document.getElementById("alertModal").classList.add("show");
     return;
   }
 

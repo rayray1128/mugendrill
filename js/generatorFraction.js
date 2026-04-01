@@ -1,27 +1,3 @@
-//js\generatorFraction.js
-
-// =============================
-// 整数
-// =============================
-function createInteger(settings) {
-  const base = createNumberByDigit(settings.selectedDigits);
-  const formatted = formatNumber(base);
-
-  if (settings.usePower && settings.selectedPowers.length && Math.random() > 0.5) {
-    const exponent = pickRandom(settings.selectedPowers);
-
-    return {
-      display: `(${formatted})${toSuperscript(exponent)}`,
-      value: Math.pow(base, exponent),
-    };
-  }
-
-  return {
-    display: formatted,
-    value: base,
-  };
-}
-
 // =============================
 // 分数
 // =============================
@@ -32,69 +8,16 @@ function createFraction() {
 
   return {
     display: `
-      <span class="fraction">
-        <span class="num">${sign === -1 ? "-" : ""}${numerator}</span>
-        <span class="den">${denominator}</span>
+      <span class="fraction-wrap">
+        ${sign === -1 ? '<span class="minus">−</span>' : ''}
+        <span class="fraction">
+          <span class="num">${numerator}</span>
+          <span class="den">${denominator}</span>
+        </span>
       </span>
     `,
     value: sign * (numerator / denominator),
   };
-}
-
-function createFractionGroup(termCount) {
-  const denominator = pickRandom([2,3,4,5]);
-
-  return Array.from({ length: termCount }, () => {
-    const numerator = getRandomInt(1, denominator - 1);
-    const sign = Math.random() > 0.5 ? -1 : 1;
-
-    return {
-      display: `${sign === -1 ? "-" : ""}${numerator}/${denominator}`,
-      value: sign * (numerator / denominator),
-    };
-  });
-}
-
-function createFractionsWithLimit(termCount) {
-  while (true) {
-    const denominators = Array.from(
-      { length: termCount },
-      () => pickRandom([2,3,4,5,6,7,8,9])
-    );
-
-    if (isValidDenominators(denominators, 30)) {
-      return denominators.map(d => {
-        const n = getRandomInt(1, d - 1);
-        const sign = Math.random() > 0.5 ? -1 : 1;
-
-        return {
-          display: `${sign === -1 ? "-" : ""}${n}/${d}`,
-          value: sign * (n / d),
-        };
-      });
-    }
-  }
-}
-
-function createFractionSet(termCount) {
-  while (true) {
-    const denominators = Array.from(
-      { length: termCount },
-      () => pickRandom([2,3,4,5,6,7,8,9])
-    );
-
-    if (isValidDenominators(denominators, 30)) {
-      return denominators.map(d => {
-        const n = getRandomInt(1, d - 1);
-        const sign = Math.random() > 0.5 ? -1 : 1;
-
-        return {
-          display: `${sign === -1 ? "-" : ""}${n}/${d}`,
-          value: sign * (n / d),
-        };
-      });
-    }
-  }
 }
 
 // =============================
@@ -114,72 +37,8 @@ function createDecimal() {
 }
 
 // =============================
-// 整数（桁指定）
+// 分母制御（LCM対応）
 // =============================
-function createNumberByDigit(selectedDigits) {
-  const digit = pickRandom(selectedDigits);
-
-  let min, max;
-  if (digit === 1) [min, max] = [1, 9];
-  if (digit === 2) [min, max] = [10, 99];
-  if (digit === 3) [min, max] = [100, 999];
-
-  const value = getRandomInt(min, max);
-  return Math.random() > 0.5 ? value : -value;
-}
-
-// =============================
-// 混合数
-// =============================
-function createMixedNumber(settings) {
-  const type = pickRandom(settings.numberTypes);
-
-  if (type === "fraction") return createFraction();
-  if (type === "decimal") return createDecimal();
-
-  return createInteger(settings);
-}
-// =============================
-// 数列生成
-// =============================
-function createNumbers(settings) {
-  return Array.from(
-    { length: settings.termCount },
-    () => createMixedNumber(settings)
-  );
-}
-
-// =============================
-// 問題生成
-// =============================
-function createProblems(settings) {
-  const numbers = createNumbers(settings);
-
-  const ops = Array.from(
-    { length: settings.termCount - 1 },
-    () => pickRandom(settings.useMultiply ? ["+","-","×"] : ["+","-"])
-  );
-
-  let q = numbers[0].display;
-  let ans = numbers[0].value;
-
-  for (let i = 1; i < numbers.length; i++) {
-    q += ` ${ops[i - 1]} (${numbers[i].display})`;
-    ans = calc(ans, numbers[i].value, ops[i - 1]);
-  }
-
-  return { question: q, answer: ans };
-}
-
-// =============================
-// 計算
-// =============================
-function calc(a, b, op) {
-  if (op === "+") return a + b;
-  if (op === "-") return a - b;
-  if (op === "×") return a * b;
-}
-
 const BASE_PRIMES = [2, 3, 5, 7];
 
 function gcd(a, b) {
@@ -206,13 +65,15 @@ function factorize(n) {
 }
 
 function generateDenominator() {
-  const p1 = BASE_PRIMES[Math.floor(Math.random() * BASE_PRIMES.length)];
+  const p1 = pickRandom(BASE_PRIMES);
 
+  // 2要素合成
   if (Math.random() < 0.3) {
-    const p2 = BASE_PRIMES[Math.floor(Math.random() * BASE_PRIMES.length)];
+    const p2 = pickRandom(BASE_PRIMES);
     return p1 * p2;
   }
 
+  // 平方
   if (Math.random() < 0.3) {
     return p1 * p1;
   }
@@ -227,10 +88,8 @@ function isValidCombination(denoms) {
     factorize(d).forEach(p => primesUsed.add(p));
   });
 
-  // 2,3,5,7全部使ったらアウト
-  if (primesUsed.size >= 4) return false;
-
-  return true;
+  // 2,3,5,7全部使ったらNG
+  return primesUsed.size < 4;
 }
 
 function getLcmLimit(count) {
@@ -239,6 +98,9 @@ function getLcmLimit(count) {
   return 50;
 }
 
+// =============================
+// 分母セット生成（メイン）
+// =============================
 function generateDenominators(count) {
   while (true) {
     const denoms = Array.from({ length: count }, generateDenominator);
@@ -250,4 +112,29 @@ function generateDenominators(count) {
       return denoms;
     }
   }
+}
+
+// =============================
+// 分数セット生成（LCM制御付き）
+// =============================
+function createFractionSet(termCount) {
+  const denoms = generateDenominators(termCount);
+
+  return denoms.map(d => {
+    const n = getRandomInt(1, d - 1);
+    const sign = Math.random() > 0.5 ? -1 : 1;
+
+    return {
+      display: `
+        <span class="fraction-wrap">
+          ${sign === -1 ? '<span class="minus">−</span>' : ''}
+          <span class="fraction">
+            <span class="num">${n}</span>
+            <span class="den">${d}</span>
+          </span>
+        </span>
+      `,
+      value: sign * (n / d),
+    };
+  });
 }

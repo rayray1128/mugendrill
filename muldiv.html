@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>無限ドリル | 正負の数（加減-整数・分数・小数）</title>
+    <title>無限ドリル | 正負の数（乗除-整数・分数・小数）</title>
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
@@ -18,7 +18,7 @@
           <p class="panel-subtitle">問題の内容や難易度を選んでください。</p>
 
           <div class="settings-grid">
-            <!-- 数の種類（NEW） -->
+            <!-- 出題タイプ -->
             <div class="field">
               <label>出題タイプ</label>
               <select id="numberMode">
@@ -31,6 +31,9 @@
             </div>
 
             <input type="hidden" id="calcType" value="addsub" />
+
+            <!-- 計算タイプ固定 -->
+            <input type="hidden" id="calcType" value="muldiv" />
 
             <!-- 桁数 -->
             <div class="field">
@@ -70,29 +73,6 @@
               <label for="termCount">項数</label>
               <input id="termCount" type="number" min="2" max="6" value="2" />
             </div>
-
-            <!-- 計算オプション -->
-            <div class="field checkbox-group">
-              <label class="checkbox-label">
-                <input id="usePower" type="checkbox" />
-                累乗を使う
-              </label>
-
-              <div id="powerOptions" class="power-options">
-                <label class="power-label">
-                  <input type="checkbox" name="power" value="2" checked />
-                  2乗
-                </label>
-                <label class="power-label">
-                  <input type="checkbox" name="power" value="3" />
-                  3乗
-                </label>
-                <label class="power-label">
-                  <input type="checkbox" name="power" value="4" />
-                  4乗
-                </label>
-              </div>
-            </div>
           </div>
 
           <!-- ボタン -->
@@ -119,16 +99,18 @@
         <section class="panel problems-panel">
           <div class="print-header">
             <div class="print-row">
-              <span>日付：</span><span class="line"></span> <span>クラス：</span
-              ><span class="line"></span> <span>番号：</span
+              <span>クラス：</span><span class="line"></span> <span>番号：</span
               ><span class="line small"></span> <span>名前：</span
               ><span class="line large"></span>
+            </div>
+            <div class="print-row">
+              <span>日付：</span><span class="line"></span>
             </div>
           </div>
           <div class="problem-header">
             <div class="problem-title-wrap">
               <h2 class="problem-title" id="sheetTitle">
-                正負の数（加減-整数・分数・小数）
+                正負の数（乗除-整数・分数・小数）
               </h2>
               <div class="problem-note" id="sheetNote">
                 設定して「問題を作る」を押すとここに表示されます。
